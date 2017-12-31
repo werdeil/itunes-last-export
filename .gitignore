@@ -1,0 +1,14 @@
+*.pyc
+*.py~
+*.orig
+.project
+.pydevproject
+.settings/*
+build/*
+
+# MAC specific files
+.DS_Store
+
+# Generated cache file
+extract_last_fm.txt*
+

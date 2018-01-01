@@ -40,12 +40,11 @@ class UpdatePlaycount():
         self.force_update = force_update
         self.use_cache    = use_cache
 
-    def set_infos(self, username, input_file, server, extract_file):
+    def set_infos(self, username, server, extract_file):
         """
         Method called to set the class infos
         """
         self.username     = username
-        self.input_file   = input_file
         self.server       = server
         self.extract_file = extract_file
 
@@ -55,10 +54,9 @@ class UpdatePlaycount():
         Main part of the class, called run as it was a thread
         """
 
-        if not self.input_file:
-            print("No input file given, extracting directly from {0} servers".format(self.server))
-            lastexporter(self.server, self.username, self.startpage, self.extract_file,
-                         tracktype='recenttracks', use_cache=self.use_cache)
+        print("No input file given, extracting directly from {0} servers".format(self.server))
+        lastexporter(self.server, self.username, self.startpage, self.extract_file,
+                     tracktype='recenttracks', use_cache=self.use_cache)
 
         itunes = SBApplication.applicationWithBundleIdentifier_("com.apple.iTunes")
 
@@ -83,16 +81,14 @@ if __name__ == "__main__":
                         help="extract file name, default is extract_last_fm.txt")
     PARSER.add_argument("-s", "--server", dest="server", default="last.fm",
                         help="server to fetch track info from, default is last.fm")
-    PARSER.add_argument("-b", "--backup", dest="backup", default=False, action="store_true",
-                        help="backup db first")
-    PARSER.add_argument("-i", "--input-file", dest="input_file", default=False, action="store_true",
-                        help="use the already extracted file as input")
+    PARSER.add_argument("-i", "--use-cache", dest="use_cache", default=False, action="store_true",
+                        help="use the already extracted file as cache")
     PARSER.add_argument("-f", "--force-update", dest="force_update", default=False,
                         action="store_true",
                         help="force the update, do not use the current playcount in the library")
 
     ARGS = PARSER.parse_args()
 
-    THREAD = UpdatePlaycount(force_update=ARGS.force_update, use_cache=True)
-    THREAD.set_infos(ARGS.username, ARGS.input_file, ARGS.server, ARGS.extract_file)
+    THREAD = UpdatePlaycount(force_update=ARGS.force_update, use_cache=ARGS.use_cache)
+    THREAD.set_infos(ARGS.username, ARGS.server, ARGS.extract_file)
     THREAD.run()

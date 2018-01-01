@@ -98,7 +98,8 @@ def update_db(itunes, extract, force_update=True, updated_part="None"):
                 print("No info found for artist '{0}' and title '{1}'".format(artist, title))
 
         else:
-            print("Track '{0}' from artist '{1}' is too short".format(title, artist))
+            pass
+            # print("Track '{0}' from artist '{1}' is too short".format(title, artist))
 
     extract_file.close()
 

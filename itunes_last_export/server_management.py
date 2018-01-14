@@ -214,13 +214,13 @@ def parse_line(ligne):
     :return: The title and the artist included in the line
     :rtype: tuple(string, string)
     """
-    regexp = re.compile(""".*?\t(.*?)\t(.*?)\t.*""")
+    regexp = re.compile("""(.*?)\t(.*?)\t(.*?)\t.*""")
     if regexp.match(ligne):
-        title, artist = regexp.findall(ligne)[0]
+        playing_date, title, artist = regexp.findall(ligne)[0]
     else:
-        title, artist = None, None
+        playing_date, title, artist = None, None, None
         print("""The following line cannot be parsed: %s""" %ligne[:-1])
-    return title, artist
+    return int(playing_date), title, artist
 
 def lastexporter(server, username, startpage, outfile, tracktype='recenttracks', use_cache=False, thread_signal=None):
     """Function called to import the information from the server and store it in a dedicated file

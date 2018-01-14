@@ -18,6 +18,7 @@
 """Module gathering all the functions for the management of the database"""
 
 import codecs
+import datetime
 
 from server_management import parse_line
 
@@ -57,22 +58,25 @@ def update_db(itunes, extract, force_update=True, updated_part="None"):
         raise NotImplementedError
 
     #Loop which will read the extract and store each play to a dictionary
-    nb_titles = 0
     for line in extract_file.readlines():
-        title, artist = parse_line(line)
+        playing_time, title, artist = parse_line(line)
         titre = title.lower().encode('utf-8')
         artiste = artist.lower().encode('utf-8')
         if artiste in biblio:
             if titre in biblio[artiste]:
-                biblio[artiste][titre] = biblio[artiste][titre] +1
+                biblio[artiste][titre]["playcount"] = biblio[artiste][titre]["playcount"] + 1
+                biblio[artiste][titre]["time"] = max(biblio[artiste][titre]["time"], playing_time)
             else:
-                biblio[artiste][titre] = 1
-                nb_titles += 1
+                biblio[artiste][titre]={}
+                biblio[artiste][titre]["playcount"] = 1
+                biblio[artiste][titre]["time"] = playing_time
         elif artiste is None or titre is None:
             pass
         else:
             biblio[artiste] = {}
-            biblio[artiste][titre] = 1
+            biblio[artiste][titre] = {}
+            biblio[artiste][titre]["playcount"] = 1
+            biblio[artiste][titre]["time"] = playing_time
 
     biblio = biblio_hooks(biblio)
 
@@ -82,10 +86,11 @@ def update_db(itunes, extract, force_update=True, updated_part="None"):
             title  = track.name().lower().encode('utf-8')
             if artist in biblio:
                 if title in biblio[artist]:
-                    lastfm_playcount = biblio[artist][title]
+                    lastfm_playcount = biblio[artist][title]["playcount"]
                     current_playcount = track.playedCount()
                     if lastfm_playcount > current_playcount or force_update:
                         track.setPlayedCount_(lastfm_playcount)
+                        track.setPlayedDate_(datetime.datetime.fromtimestamp(biblio[artist][title]["time"]))
                         print("Updating playcount for {0} from artist {1} to {2} (previous {3})".format(title, artist, lastfm_playcount, current_playcount))
                         matched.append("{0} {1}".format(artiste, title))
                     else:
@@ -113,9 +118,10 @@ def biblio_hooks(biblio):
     #Ugly Hack for -M-
     for titre in biblio["-m-"]:
         if titre in biblio["m"]:
-            biblio["m"][titre] += biblio["-m-"][titre]
+            biblio["m"][titre]["playcount"] += biblio["-m-"][titre]["playcount"]
         else:
-            biblio["m"][titre] = biblio["-m-"][titre]
+            biblio["m"][titre] = {}
+            biblio["m"][titre]["playcount"] = biblio["-m-"][titre]["playcount"]
 
     for titre in biblio["arthur h"]:
         if titre == "mystic rhumba":

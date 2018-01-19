@@ -222,7 +222,7 @@ def parse_line(ligne):
         print("""The following line cannot be parsed: %s""" %ligne[:-1])
     return int(playing_date), title, artist
 
-def lastexporter(server, username, startpage, outfile, tracktype='recenttracks', use_cache=False, thread_signal=None):
+def lastexporter(server, username, startpage, outfile, tracktype='recenttracks', use_cache=False, progress_value=None, progress_bar=None):
     """Function called to import the information from the server and store it in a dedicated file
 
     :param server: Server on which the information will be extracted
@@ -266,8 +266,9 @@ def lastexporter(server, username, startpage, outfile, tracktype='recenttracks',
     try:
         for page, totalpages, tracks in get_tracks(server, username, startpage, tracktype=tracktype, firsttrack=firsttrack):
             print("Got page %s of %s.." % (page, totalpages))
-            if thread_signal:
-                thread_signal.emit(50*page/totalpages) #the import takes 50% of the progress bar
+            if progress_value:
+                progress_value.set(50*page/totalpages)
+                progress_bar.update() #the import takes 50% of the progress bar
             for track in tracks:
                 if tracktype == 'recenttracks':
                     trackdict.setdefault(track[0], track)
@@ -275,6 +276,8 @@ def lastexporter(server, username, startpage, outfile, tracktype='recenttracks',
                     #Can not use timestamp as key for loved/banned tracks as it's not unique
                     n += 1
                     trackdict.setdefault(n, track)
+
+
     except ValueError as exception:
         exit(exception)
     except Exception:

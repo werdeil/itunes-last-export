@@ -17,7 +17,6 @@
 """Script which allows to update the playcount in the itunes database from a last.fm extract"""
 
 import argparse
-
 # from PyQt4 import QtCore
 
 from Foundation import *
@@ -31,14 +30,16 @@ class UpdatePlaycount():
     Class called to update the playcount, a class is used as it used to be a thread
     """
 
-    def __init__(self, force_update=False, use_cache=False):
-        self.username     = ""
-        self.input_file   = ""
-        self.server       = ""
-        self.extract_file = ""
-        self.startpage    = 1
-        self.force_update = force_update
-        self.use_cache    = use_cache
+    def __init__(self, force_update=False, use_cache=False, progress_bar=None, progress_value=None):
+        self.username       = ""
+        self.input_file     = ""
+        self.server         = ""
+        self.extract_file   = ""
+        self.startpage      = 1
+        self.force_update   = force_update
+        self.use_cache      = use_cache
+        self.progress_bar   = progress_bar
+        self.progress_value = progress_value
 
     def set_infos(self, username, server, extract_file):
         """
@@ -53,19 +54,29 @@ class UpdatePlaycount():
         """
         Main part of the class, called run as it was a thread
         """
+        if self.progress_value:
+            self.progress_value.set(0)
+            self.progress_bar.update()
 
         print("No input file given, extracting directly from {0} servers".format(self.server))
         lastexporter(self.server, self.username, self.startpage, self.extract_file,
-                     tracktype='recenttracks', use_cache=self.use_cache)
+                     tracktype='recenttracks', use_cache=self.use_cache, progress_value=self.progress_value, progress_bar=self.progress_bar)
+
+        if self.progress_value:
+            self.progress_value.set(50)
+            self.progress_bar.update()
 
         itunes = SBApplication.applicationWithBundleIdentifier_("com.apple.iTunes")
 
         print("Reading extract file and updating database")
         matched, not_matched, already_ok = update_db(itunes, self.extract_file, self.force_update,
-                                                     updated_part="playcount")
+                                                     updated_part="playcount", progress_value=self.progress_value, progress_bar=self.progress_bar)
         print("%d have been updated, %d had the correct playcount, no match was found for %d"
               %(len(matched), len(already_ok), len(not_matched)))
-        # self.partDone.emit(100)
+
+        if self.progress_value:
+            self.progress_value.set(100)
+            self.progress_bar.update()
 
 
 if __name__ == "__main__":

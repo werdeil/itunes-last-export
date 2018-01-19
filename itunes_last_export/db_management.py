@@ -38,7 +38,7 @@ def backup_db(db_path):
     # shutil.copy(os.path.expanduser("%s/clementine.db" %db_path),
     #             os.path.expanduser("%s/clementine_backup.db" %db_path))
 
-def update_db(itunes, extract, force_update=True, updated_part="None"):
+def update_db(itunes, extract, force_update=True, updated_part="None", progress_value=None, progress_bar=None):
     """Update the ratings or the playcounts of a database according to an extract file
 
     :param itunes: Applescript itunes application
@@ -80,6 +80,9 @@ def update_db(itunes, extract, force_update=True, updated_part="None"):
 
     biblio = biblio_hooks(biblio)
 
+    nbtracks = len(itunes.tracks())
+    track_count = 0
+
     for track in itunes.tracks():
         if track.duration() > 30:
             artist = track.artist().lower().encode('utf-8')
@@ -105,6 +108,10 @@ def update_db(itunes, extract, force_update=True, updated_part="None"):
         else:
             pass
             # print("Track '{0}' from artist '{1}' is too short".format(title, artist))
+        track_count +=1
+        if progress_value:
+            progress_value.set(50+(50*track_count)/(nbtracks))
+            progress_bar.update()
 
     extract_file.close()
 
@@ -122,6 +129,7 @@ def biblio_hooks(biblio):
         else:
             biblio["m"][titre] = {}
             biblio["m"][titre]["playcount"] = biblio["-m-"][titre]["playcount"]
+            biblio["m"][titre]["time"] = biblio["-m-"][titre]["time"]
 
     for titre in biblio["arthur h"]:
         if titre == "mystic rhumba":

@@ -21,6 +21,7 @@ Module containing the GUI of the itunes_last_export tool
 """
 
 from Tkinter import *
+import ttk
 
 from update_playcount import UpdatePlaycount
 
@@ -37,6 +38,7 @@ class Interface(Frame):
         self.extract_file = "extract_last_fm.txt"
         self.use_cache = False
         self.force_update = False
+        self.progress_value = IntVar()
 
         # Création de nos widgets
         self.message = Label(self, text="Please enter your last.fm username")
@@ -60,6 +62,9 @@ class Interface(Frame):
         self.bouton_cliquer = Button(self, text="Launch", command=self.cliquer)
         self.bouton_cliquer.grid(row=5, column=2)
 
+        self.progressbar = ttk.Progressbar(self, orient=HORIZONTAL, length=300, mode='determinate', variable=self.progress_value)
+        self.progressbar.grid(row=6, column=1, columnspan=2)
+
         self.pack(fill=BOTH)
 
 
@@ -67,12 +72,12 @@ class Interface(Frame):
         """
         Function called when pressing the "Run" button on the UI
         """
-
+        self.progress_value.set(0)
         self.username = self.username_entry.get()
         self.use_cache = self.use_cache_var.get()
         self.force_update = self.force_update_var.get()
         print(self.username, self.force_update, self.use_cache)
-        self.thread = UpdatePlaycount(force_update=self.force_update, use_cache=self.use_cache)
+        self.thread = UpdatePlaycount(force_update=self.force_update, use_cache=self.use_cache, progress_bar=self.progressbar, progress_value=self.progress_value)
         self.thread.set_infos(self.username, self.server, self.extract_file)
         self.thread.run()
 

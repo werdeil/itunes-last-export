@@ -91,11 +91,13 @@ def update_db(itunes, extract, force_update=True, updated_part="None", progress_
                 if title in biblio[artist]:
                     lastfm_playcount = biblio[artist][title]["playcount"]
                     current_playcount = track.playedCount()
-                    if lastfm_playcount > current_playcount or force_update:
+                    if lastfm_playcount > current_playcount or (lastfm_playcount < current_playcount and force_update):
                         track.setPlayedCount_(lastfm_playcount)
                         track.setPlayedDate_(datetime.datetime.fromtimestamp(biblio[artist][title]["time"]))
                         print("Updating playcount for {0} from artist {1} to {2} (previous {3})".format(title, artist, lastfm_playcount, current_playcount))
                         matched.append("{0} {1}".format(artiste, title))
+                    elif lastfm_playcount < current_playcount:
+                        print("Playcount for {0} from artist {1} higher than on last.fm {2} (on itunes {3})".format(title, artist, lastfm_playcount, current_playcount))
                     else:
                         already_ok.append("{0} {1}".format(artiste, title))
                 else:

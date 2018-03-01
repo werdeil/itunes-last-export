@@ -44,7 +44,7 @@ def connect_server(server, username, startpage, sleep_func=time.sleep, tracktype
     if server == "libre.fm":
         baseurl = 'http://alpha.libre.fm/2.0/?'
         urlvars = dict(method='user.get%s' % tracktype,
-                       api_key=('clementine_last_export').ljust(32, '-'),
+                       api_key=('itunes_last_export').ljust(32, '-'),
                        user=username,
                        page=startpage,
                        limit=200)
@@ -61,7 +61,7 @@ def connect_server(server, username, startpage, sleep_func=time.sleep, tracktype
             server = 'http://%s' % server
         baseurl = server + '/2.0/?'
         urlvars = dict(method='user.get%s' % tracktype,
-                       api_key=('clementine_last_export').ljust(32, '-'),
+                       api_key=('itunes_last_export').ljust(32, '-'),
                        user=username,
                        page=startpage,
                        limit=200)
@@ -219,7 +219,7 @@ def parse_line(ligne):
         playing_date, title, artist = regexp.findall(ligne)[0]
     else:
         playing_date, title, artist = None, None, None
-        print("""The following line cannot be parsed: %s""" %ligne[:-1])
+        print("The following line cannot be parsed: {0}".format(ligne[:-1]))
     return int(playing_date), title, artist
 
 def lastexporter(server, username, startpage, outfile, tracktype='recenttracks', use_cache=False, progress_value=None, progress_bar=None):
@@ -244,7 +244,7 @@ def lastexporter(server, username, startpage, outfile, tracktype='recenttracks',
     track_regexp = re.compile("(.*?)\t(.*?)\t(.*?)\t(.*)")
     #read the already existing file (if it exists) and use_cache option
     if os.path.exists(outfile) and use_cache:
-        print("%s is already present, it will be used as reference to speed up the import" %outfile)
+        print("{0} is already present, it will be used as reference to speed up the import".format(outfile))
 
         old_file = io.open(outfile, mode="r", encoding="utf-8")
 
@@ -286,7 +286,7 @@ def lastexporter(server, username, startpage, outfile, tracktype='recenttracks',
         with io.open(outfile, mode='w', encoding="utf-8") as outfileobj:
             tracks = sorted(trackdict.values(), reverse=True)
             write_tracks(tracks, outfileobj)
-            print("Wrote page %s-%s of %s to file %s" % (startpage, page, totalpages, outfile))
+            print("Wrote page {0}-{1} of {2} to file {3}".format(startpage, page, totalpages, outfile))
 
             for line in already_imported_lines:
                 outfileobj.write(line)

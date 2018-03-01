@@ -81,10 +81,15 @@ class Interface(Frame):
         self.thread.set_infos(self.username, self.server, self.extract_file)
         self.thread.run()
 
+def main():
+    """
+    Gui function, to be called by the launcher
+    """
+    window = Tk()
+    window.title("iTunes Last Export")
+    interface = Interface(window)
+
+    interface.mainloop()
 
 if __name__ == '__main__':
-    WINDOW = Tk()
-    WINDOW.title("iTunes Last Export")
-    INTERFACE = Interface(WINDOW)
-
-    INTERFACE.mainloop()
+    main()

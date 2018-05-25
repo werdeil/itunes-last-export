@@ -1,5 +1,5 @@
 
-.. image:: https://raw.githubusercontent.com/werdeil/itunes_last_export/master/itunes_last_export/images/itunes_last_export.png
+.. image:: https://raw.githubusercontent.com/werdeil/itunes-last-export/master/itunes_last_export/images/itunes_last_export.png
    :align: center
    :alt: itunes_last_export
 

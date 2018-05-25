@@ -44,4 +44,4 @@ The graphical interface shall start, you can then use it.
 Comments
 --------
 
-Feel free to give me any feedback on this github page: http://github.com/werdeil/itunes-last-export/
+Feel free to give me any feedback on this github page: http://github.com/werdeil/itunes_last_export/

@@ -175,7 +175,7 @@ def get_tracks(server, username, startpage=1, sleep_func=time.sleep, tracktype='
         yield page, totalpages, tracks
 
         page += 1
-        sleep_func(.5)
+        sleep_func(.1)
 
         if import_finished:
             break

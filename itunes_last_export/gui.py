@@ -23,6 +23,7 @@ Module containing the GUI of the itunes_last_export tool
 from Tkinter import *
 import ttk
 
+import os
 import os.path as osp
 
 from ConfigParser import ConfigParser, NoSectionError
@@ -110,6 +111,8 @@ class Interface(Frame):
         """
         Store the config in the .config/itunes-last-export folder
         """
+        if not osp.exists(osp.abspath(osp.expanduser("~/.config/itunes-last-export/"))):
+            os.makedirs(osp.abspath(osp.expanduser("~/.config/itunes-last-export/")))
         if 'Account' not in self.parser.sections():
             self.parser.add_section('Account')
         self.parser.set('Account', 'username', self.username)

@@ -39,7 +39,7 @@ class Interface(Frame):
         Frame.__init__(self, fenetre, width=768, height=576, **kwargs)
         self.thread = None
         self.server = "last.fm"
-        self.extract_file = "extract_last_fm.txt"
+        self.extract_file = osp.abspath(osp.expanduser("~/.config/itunes-last-export/extract_last_fm.txt"))
         self.config_path = osp.abspath(osp.expanduser("~/.config/itunes-last-export/itunes-last-export.cfg"))
         self.username = ''
         self.use_cache = False

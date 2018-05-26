@@ -23,6 +23,10 @@ Module containing the GUI of the itunes_last_export tool
 from Tkinter import *
 import ttk
 
+import os.path as osp
+
+from ConfigParser import ConfigParser, NoSectionError
+
 from update_playcount import UpdatePlaycount
 
 class Interface(Frame):
@@ -33,11 +37,13 @@ class Interface(Frame):
     def __init__(self, fenetre, **kwargs):
         Frame.__init__(self, fenetre, width=768, height=576, **kwargs)
         self.thread = None
-        self.username = ""
         self.server = "last.fm"
         self.extract_file = "extract_last_fm.txt"
+        self.config_path = osp.abspath(osp.expanduser("~/.config/itunes-last-export/itunes-last-export.cfg"))
+        self.username = ''
         self.use_cache = False
         self.force_update = False
+        self.load_config()
         self.progress_value = IntVar()
 
         # Création de nos widgets
@@ -47,13 +53,18 @@ class Interface(Frame):
         self.username_label = Label(self, text="Username")
         self.username_label.grid(column=1, row=2)
         self.username_entry = Entry(self)
+        self.username_entry.insert(0, self.username)
         self.username_entry.grid(column=2, row=2)
 
         self.use_cache_var = IntVar()
         self.use_cache_case = Checkbutton(self, text="Use cache file", variable=self.use_cache_var)
+        if self.use_cache:
+            self.use_cache_case.select()
         self.use_cache_case.grid(row=3, column=1, columnspan=2)
         self.force_update_var = IntVar()
         self.force_update_case = Checkbutton(self, text="Force the update", variable=self.force_update_var)
+        if self.force_update:
+            self.force_update_case.select()
         self.force_update_case.grid(row=4, column=1, columnspan=2)
 
         self.bouton_quitter = Button(self, text="Quit", command=self.quit)
@@ -77,9 +88,40 @@ class Interface(Frame):
         self.use_cache = self.use_cache_var.get()
         self.force_update = self.force_update_var.get()
         print(self.username, self.force_update, self.use_cache)
+        self.store_config()
         self.thread = UpdatePlaycount(force_update=self.force_update, use_cache=self.use_cache, progress_bar=self.progressbar, progress_value=self.progress_value)
         self.thread.set_infos(self.username, self.server, self.extract_file)
         self.thread.run()
+
+    def load_config(self):
+        """
+        Loads the config store in the .config/itunes-last-export folder
+        """
+        self.parser = ConfigParser()
+        self.parser.read(self.config_path)
+        try:
+            self.username = self.parser.get('Account','username')
+            self.use_cache = self.parser.getboolean('Options','use_cache')
+            self.force_update = self.parser.getboolean('Options','force_update')
+        except NoSectionError:
+            pass
+
+    def store_config(self):
+        """
+        Store the config in the .config/itunes-last-export folder
+        """
+        if 'Account' not in self.parser.sections():
+            self.parser.add_section('Account')
+        self.parser.set('Account', 'username', self.username)
+        if 'Options' not in self.parser.sections():
+            self.parser.add_section("Options")
+        self.parser.set('Options','use_cache', self.use_cache)
+        self.parser.set('Options','force_update', self.force_update)
+
+
+        # Writing our configuration file to 'example.ini'
+        with open(self.config_path, 'wb') as configfile:
+            self.parser.write(configfile)
 
 def main():
     """
@@ -88,8 +130,8 @@ def main():
     window = Tk()
     window.title("iTunes Last Export")
     interface = Interface(window)
-
     interface.mainloop()
+
 
 if __name__ == '__main__':
     main()

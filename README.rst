@@ -13,7 +13,20 @@ This tool is working on Mac and may work also on Windows but wasn't tested on th
 Install
 -------
 
-It is planned to be able to install itunes_last_exporter through pip, issue #2 is opened to track this development
+Install ``itunes-last-export`` from the `pypi repository <https://pypi.org/project/itunes-last-export/>`_:
+
+   ::
+
+        $ sudo pip3 install itunes-last-export
+
+Run
+---
+
+Until the pip package is available, you can start the tool by cloing the repository and then in the cloned directory::
+
+	$ PYTHONPATH=. bin/itunes-last-export
+
+The graphical interface shall start, you can then use it.
 
 Install developing version
 --------------------------
@@ -29,17 +42,12 @@ clone of this ``git`` repository.
 
    $ cd itunes-last-export
 
+- install ``itunes-last-export`` in editable mode ::
+
+   $ pip3 install -e . --user
+
 - start the application exactly in the same way as installed from pypi. All modifications performed
   in the cloned repository are taken into account when the application starts.
-
-Run
----
-
-Until the pip package is available, you can start the tool by cloing the repository and then in the cloned directory::
-
-	$ PYTHONPATH=. bin/itunes-last-export
-
-The graphical interface shall start, you can then use it.
 
 Comments
 --------

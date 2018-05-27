@@ -22,11 +22,13 @@ Install ``itunes-last-export`` from the `pypi repository <https://pypi.org/proje
 Run
 ---
 
-Until the pip package is available, you can start the tool by cloing the repository and then in the cloned directory::
+Start the application using the command::
 
-	$ PYTHONPATH=. bin/itunes-last-export
+    $ itunes-last-export
 
 The graphical interface shall start, you can then use it.
+
+For information all the cache data is sotred in the .config/itunes_last_export folder of the user.
 
 Install developing version
 --------------------------

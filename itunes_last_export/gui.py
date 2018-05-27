@@ -49,36 +49,37 @@ class Interface(Frame):
 
         # Création de nos widgets
         self.message = Label(self, text="Please enter your last.fm username")
-        self.message.grid(column=1, row=1, columnspan=2)
+        self.message.grid(column=1, row=1, columnspan=3)
 
         self.username_label = Label(self, text="Username")
         self.username_label.grid(column=1, row=2)
         self.username_entry = Entry(self)
         self.username_entry.insert(0, self.username)
-        self.username_entry.grid(column=2, row=2)
+        self.username_entry.grid(column=2, row=2, columnspan=2)
 
+        self.options_label = Label(self, text="Options")
+        self.options_label.grid(column=1, row=3)
         self.use_cache_var = IntVar()
         self.use_cache_case = Checkbutton(self, text="Use cache file", variable=self.use_cache_var)
         if self.use_cache:
             self.use_cache_case.select()
-        self.use_cache_case.grid(row=3, column=1, columnspan=2)
+        self.use_cache_case.grid(row=3, column=2, columnspan=2, sticky=W)
         self.force_update_var = IntVar()
         self.force_update_case = Checkbutton(self, text="Force the update", variable=self.force_update_var)
         if self.force_update:
             self.force_update_case.select()
-        self.force_update_case.grid(row=4, column=1, columnspan=2)
+        self.force_update_case.grid(row=4, column=2, columnspan=2, sticky=W)
 
         self.bouton_quitter = Button(self, text="Quit", command=self.quit)
         self.bouton_quitter.grid(row=5, column=1)
 
         self.bouton_cliquer = Button(self, text="Launch", command=self.cliquer)
-        self.bouton_cliquer.grid(row=5, column=2)
+        self.bouton_cliquer.grid(row=5, column=3)
 
         self.progressbar = ttk.Progressbar(self, orient=HORIZONTAL, length=300, mode='determinate', variable=self.progress_value)
-        self.progressbar.grid(row=6, column=1, columnspan=2)
+        self.progressbar.grid(row=6, column=1, columnspan=3)
 
         self.pack(fill=BOTH)
-
 
     def cliquer(self):
         """

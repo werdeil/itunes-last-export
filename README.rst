@@ -13,7 +13,7 @@ This tool is working on Mac and may work also on Windows but wasn't tested on th
 Install
 -------
 
-Install ``itunes-last-export`` from the `pypi repository <https://pypi.org/project/itunes-last-export/>`::
+Install ``itunes-last-export`` from the `pypi repository <https://pypi.org/project/itunes-last-export/>`_::
 
     $ sudo pip3 install itunes-last-export
 

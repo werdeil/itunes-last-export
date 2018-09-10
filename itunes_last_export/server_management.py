@@ -194,7 +194,7 @@ def parse_line(ligne):
         print("The following line cannot be parsed: {0}".format(ligne[:-1]))
     return int(playing_date), title, artist
 
-def lastexporter(server, username, startpage, outfile, tracktype='recenttracks', use_cache=False, progress_value=None, progress_bar=None):
+def lastexporter(server, username, startpage, outfile, tracktype='recenttracks', use_cache=False, status=None):
     """Function called to import the information from the server and store it in a dedicated file
 
     :param server: Server on which the information will be extracted
@@ -231,9 +231,11 @@ def lastexporter(server, username, startpage, outfile, tracktype='recenttracks',
     try:
         for page, totalpages, tracks in get_tracks(server, username, startpage, tracktype=tracktype, firsttrack=firsttrack):
             print("Got page %s of %s..." % (page, totalpages))
-            if progress_value:
-                progress_value.set(50*page/totalpages)
-                progress_bar.update() #the import takes 50% of the progress bar
+            if status:
+                status.progress_value.set(50*page/totalpages)
+                status.progress_bar.update() #the import takes 50% of the progress bar
+                status.status_text.set("Processing page %s of %s..." % (page, totalpages))
+                status.status_bar.update()
             for track in tracks:
                 if tracktype == 'recenttracks':
                     trackdict.setdefault(track[0], track)

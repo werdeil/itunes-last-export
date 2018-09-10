@@ -45,7 +45,7 @@ class Interface(Frame):
         self.use_cache = False
         self.force_update = False
         self.load_config()
-        self.progress_value = IntVar()
+        self.status = Status()
 
         # Création de nos widgets
         self.message = Label(self, text="Please enter your last.fm username")
@@ -76,8 +76,13 @@ class Interface(Frame):
         self.bouton_cliquer = Button(self, text="Launch", command=self.cliquer)
         self.bouton_cliquer.grid(row=5, column=3)
 
-        self.progressbar = ttk.Progressbar(self, orient=HORIZONTAL, length=300, mode='determinate', variable=self.progress_value)
-        self.progressbar.grid(row=6, column=1, columnspan=3)
+        progress_bar = ttk.Progressbar(self, orient=HORIZONTAL, length=300, mode='determinate', variable=self.status.progress_value)
+        self.status.init_progress_bar(progress_bar)
+        self.status.progress_bar.grid(row=6, column=1, columnspan=3)
+
+        status_bar = Label(fenetre, textvariable=self.status.status_text, bd=1, relief=SUNKEN, anchor=W)
+        self.status.init_status_bar(status_bar)
+        self.status.status_bar.pack(side=BOTTOM, fill=X)
 
         self.pack(fill=BOTH)
 
@@ -85,15 +90,16 @@ class Interface(Frame):
         """
         Function called when pressing the "Run" button on the UI
         """
-        self.progress_value.set(0)
+        self.status.start()
         self.username = self.username_entry.get()
         self.use_cache = self.use_cache_var.get()
         self.force_update = self.force_update_var.get()
         print(self.username, self.force_update, self.use_cache)
         self.store_config()
-        self.thread = UpdatePlaycount(force_update=self.force_update, use_cache=self.use_cache, progress_bar=self.progressbar, progress_value=self.progress_value)
+        self.thread = UpdatePlaycount(force_update=self.force_update, use_cache=self.use_cache, status=self.status)
         self.thread.set_infos(self.username, self.server, self.extract_file)
         self.thread.run()
+        self.status.finish()
 
     def load_config(self):
         """
@@ -127,6 +133,36 @@ class Interface(Frame):
         with open(self.config_path, 'wb') as configfile:
             self.parser.write(configfile)
 
+
+class Status(object):
+    """
+    Class containing the status objects (progress bar and status bar)
+    """
+
+    def __init__(self):
+        self.progress_bar   = None
+        self.progress_value = IntVar()
+        self.statusbar      = None
+        self.status_text    = StringVar()
+
+
+    def init_status_bar(self, status_bar):
+        self.status_bar  = status_bar
+        self.status_text.set("Idle")
+
+    def init_progress_bar(self, progress_bar):
+        self.progress_bar   = progress_bar
+
+    def start(self):
+        self.progress_value.set(0)
+        self.status_text.set("Processing")
+
+    def finish(self):
+        self.status_text.set("Finished")
+
+
+
+
 def main():
     """
     Gui function, to be called by the launcher
@@ -134,6 +170,7 @@ def main():
     window = Tk()
     window.title("iTunes Last Export")
     interface = Interface(window)
+    interface.pack_propagate(0)
     interface.mainloop()
 
 

@@ -38,7 +38,7 @@ def backup_db(db_path):
     # shutil.copy(os.path.expanduser("%s/clementine.db" %db_path),
     #             os.path.expanduser("%s/clementine_backup.db" %db_path))
 
-def update_db(itunes, extract, force_update=True, updated_part="None", progress_value=None, progress_bar=None):
+def update_db(itunes, extract, force_update=True, updated_part="None", status=None):
     """Update the ratings or the playcounts of a database according to an extract file
 
     :param itunes: Applescript itunes application
@@ -97,7 +97,8 @@ def update_db(itunes, extract, force_update=True, updated_part="None", progress_
                         print("Updating playcount for {0} from artist {1} to {2} (previous {3})".format(title, artist, lastfm_playcount, current_playcount))
                         matched.append("{0} {1}".format(artiste, title))
                     elif lastfm_playcount < current_playcount:
-                        print("Playcount for {0} from artist {1} higher than on last.fm {2} (on itunes {3})".format(title, artist, lastfm_playcount, current_playcount))
+                        print("Playcount higher than on last.fm {0} (on itunes {1}) for {2}\t{3}\t{4}\t{5}\t{6}\tL\t{7}".format(lastfm_playcount, current_playcount, 
+                            artist, track.album().lower().encode('utf-8'), title, track.trackNumber(), int(track.duration()), int(track.playedDate().timeIntervalSince1970())))
                     else:
                         already_ok.append("{0} {1}".format(artiste, title))
                 else:
@@ -111,9 +112,12 @@ def update_db(itunes, extract, force_update=True, updated_part="None", progress_
             pass
             # print("Track '{0}' from artist '{1}' is too short".format(title, artist))
         track_count +=1
-        if progress_value:
-            progress_value.set(50+(50*track_count)/(nbtracks))
-            progress_bar.update()
+        if status:
+            status.progress_value.set(50+(50*track_count)/(nbtracks))
+            status.progress_bar.update()
+            text = "{0} - {1}".format(track.artist().encode('utf-8'), track.name().encode('utf-8'))
+            status.status_text.set(text)
+            status.status_bar.update()
 
     extract_file.close()
 

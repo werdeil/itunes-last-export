@@ -80,7 +80,7 @@ class Interface(Frame):
         self.status.init_progress_bar(progress_bar)
         self.status.progress_bar.grid(row=6, column=1, columnspan=3)
 
-        status_bar = Label(fenetre, textvariable=self.status.status_text, bd=1, relief=SUNKEN, anchor=W)
+        status_bar = Label(fenetre, textvariable=self.status.status_text, bd=1, relief=SUNKEN, anchor=W, width=30)
         self.status.init_status_bar(status_bar)
         self.status.status_bar.pack(side=BOTTOM, fill=X)
 

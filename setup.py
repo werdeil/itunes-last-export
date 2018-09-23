@@ -8,7 +8,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="itunes-last-export",
-    version="0.0.4",
+    version="0.0.6",
     author="Vincent Verdeil",
     author_email="vincent.verdeil@gmail.com",
     description="Tool to import playcounts and loved tracks from your last.fm account into iTunes",

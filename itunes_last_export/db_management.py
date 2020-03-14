@@ -53,6 +53,7 @@ def update_db(itunes, extract, force_update=True, updated_part="None", status=No
     matched = []
     not_matched = []
     already_ok = []
+    itunes_higher = []
 
     if updated_part == "rating":
         raise NotImplementedError
@@ -97,8 +98,15 @@ def update_db(itunes, extract, force_update=True, updated_part="None", status=No
                         print("Updating playcount for {0} from artist {1} to {2} (previous {3})".format(title, artist, lastfm_playcount, current_playcount))
                         matched.append("{0} {1}".format(artiste, title))
                     elif lastfm_playcount < current_playcount:
-                        print("Playcount higher than on last.fm {0} (on itunes {1}) for {2}\t{3}\t{4}\t{5}\t{6}\tL\t{7}".format(lastfm_playcount, current_playcount, 
-                            artist, track.album().lower().encode('utf-8'), title, track.trackNumber(), int(track.duration()), int(track.playedDate().timeIntervalSince1970())))
+                        print("Playcount higher than on last.fm {0} (on itunes {1}) for {2}\t{3}\t{4}\t{5}\t{6}\tL\t{7}".format(lastfm_playcount,
+                                                                                                                                current_playcount,
+                                                                                                                                artist,
+                                                                                                                                track.album().lower().encode('utf-8'),
+                                                                                                                                title,
+                                                                                                                                track.trackNumber(),
+                                                                                                                                int(track.duration()),
+                                                                                                                                int(track.playedDate().timeIntervalSince1970())))
+                        itunes_higher.append("{0} {1}".format(artiste, title))
                     else:
                         already_ok.append("{0} {1}".format(artiste, title))
                 else:
@@ -120,6 +128,7 @@ def update_db(itunes, extract, force_update=True, updated_part="None", status=No
             status.status_bar.update()
 
     extract_file.close()
+    print("There was {0} tracks with higher playcounts on iTunes".format(len(itunes_higher)))
 
     return matched, not_matched, already_ok
 

@@ -19,14 +19,19 @@
 Module containing the GUI of the itunes_last_export tool
 
 """
+import sys
 
-from Tkinter import *
-import ttk
+if sys.version_info[0] < 3:
+    from Tkinter import *
+    import ttk
+    from ConfigParser import ConfigParser, NoSectionError
+else:
+    from tkinter import *
+    from configparser import ConfigParser, NoSectionError
 
 import os
 import os.path as osp
 
-from ConfigParser import ConfigParser, NoSectionError
 
 from update_playcount import UpdatePlaycount
 

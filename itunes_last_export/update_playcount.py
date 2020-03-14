@@ -14,9 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Script which allows to update the playcount in the itunes database from a last.fm extract"""
+"""Script which allows to update the playcount in the music app database from a last.fm extract"""
 
 import argparse
+import platform
 # from PyQt4 import QtCore
 
 from Foundation import *
@@ -65,10 +66,13 @@ class UpdatePlaycount():
             self.status.progress_value.set(50)
             self.status.progress_bar.update()
 
-        itunes = SBApplication.applicationWithBundleIdentifier_("com.apple.iTunes")
+        if int(platform.mac_ver()[0].split(".")[1]) > 14:
+            music_app = SBApplication.applicationWithBundleIdentifier_("com.apple.Music")
+        else:
+            music_app = SBApplication.applicationWithBundleIdentifier_("com.apple.iTunes")
 
         print("Reading extract file and updating database")
-        matched, not_matched, already_ok = update_db(itunes, self.extract_file, self.force_update, updated_part="playcount", status=self.status)
+        matched, not_matched, already_ok = update_db(music_app, self.extract_file, self.force_update, updated_part="playcount", status=self.status)
         print("%d have been updated, %d had the correct playcount, no match was found for %d"
               %(len(matched), len(already_ok), len(not_matched)))
 
@@ -81,7 +85,7 @@ if __name__ == "__main__":
     PARSER = argparse.ArgumentParser()
     PARSER.usage = """Usage: %prog <username> [options]
     
-    Script which will extract data from the server and update itunes database
+    Script which will extract data from the server and update the music app database
     <username> .......... Username used in the server
     """
 

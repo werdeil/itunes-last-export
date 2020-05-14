@@ -8,7 +8,7 @@ The ``itunes-last-export`` tool allows you import playcounts from Last.fm to upd
 Requirements
 ------------
 
-This tool is working on Mac and may work also on Windows but wasn't tested on this OS.
+This tool is only working on Mac and doesn't work also on Windows.
 
 Install
 -------
